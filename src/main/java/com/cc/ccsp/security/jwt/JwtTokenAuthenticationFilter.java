@@ -12,6 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public class JwtTokenAuthenticationFilter extends GenericFilter {
 
+  private static final long serialVersionUID = 5153283122069738042L;
+
   private JwtTokenProvider jwtTokenProvider;
 
   public JwtTokenAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
@@ -23,6 +25,10 @@ public class JwtTokenAuthenticationFilter extends GenericFilter {
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
       throws IOException, ServletException {
     String token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
+
+    if (null == token) {
+      SecurityContextHolder.clearContext();
+    }
 
     if (token != null && jwtTokenProvider.validateToken(token)) {
       Authentication auth = jwtTokenProvider.getAuthentication(token);
