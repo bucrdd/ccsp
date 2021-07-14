@@ -1,5 +1,6 @@
 package com.cc.ccsp.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Collection;
@@ -34,6 +35,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 @AllArgsConstructor
 public class SysUser implements UserDetails {
 
+  private static final long serialVersionUID = 2186588456324233434L;
+
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(length = 11)
@@ -45,12 +48,17 @@ public class SysUser implements UserDetails {
   @ApiModelProperty(value = "用户名")
   private String username;
 
+  @Builder.Default
+  @Column(nullable = false, columnDefinition = "bit default false")
+  private Boolean enable = false;
+
   @ApiModelProperty(value = "用户角色")
-  @ManyToMany(targetEntity = SysRole.class, fetch = FetchType.EAGER)
+  @ManyToMany(targetEntity = SysRole.class)
   @JoinTable(name = "sys_user_role",
       joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
       inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
   )
+  @JsonBackReference
   private Set<SysRole> roles;
 
   @Override
@@ -78,6 +86,6 @@ public class SysUser implements UserDetails {
 
   @Override
   public boolean isEnabled() {
-    return true;
+    return enable;
   }
 }

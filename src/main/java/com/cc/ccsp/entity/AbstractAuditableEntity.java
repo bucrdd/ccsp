@@ -1,5 +1,6 @@
 package com.cc.ccsp.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.io.Serializable;
 import java.time.LocalDate;
 import javax.persistence.EntityListeners;
@@ -29,10 +30,12 @@ public abstract class AbstractAuditableEntity<U, ID> extends AbstractPersistable
   @CreatedBy
   @ManyToOne
   @JoinColumn(name = "created_by")
+  @JsonBackReference
   U createdBy;
 
   @LastModifiedBy
   @ManyToOne
   @JoinColumn(name = "last_modified_by")
+  @JsonBackReference
   U lastModifiedBy;
 }

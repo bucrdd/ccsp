@@ -32,7 +32,7 @@ public class RegisterController {
   public SysUser register(@RequestBody RegisterRequest data) {
     SysUser user = data.toUser(passwordEncoder);
     if (users.existsByUsername(data.getUsername())) {
-      return new SysUser(null, null, "Null", null);
+      return new SysUser();
     }
     return users.save(user);
   }

@@ -7,9 +7,11 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+@Slf4j
 public class JwtTokenAuthenticationFilter extends GenericFilter {
 
   private static final long serialVersionUID = 5153283122069738042L;
@@ -25,14 +27,12 @@ public class JwtTokenAuthenticationFilter extends GenericFilter {
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
       throws IOException, ServletException {
     String token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
-
-    if (null == token) {
-      SecurityContextHolder.clearContext();
+    log.info("request with token={}", token);
+    if (token == null) {
+      SecurityContextHolder.getContext().setAuthentication(null);
     }
-
-    if (token != null && jwtTokenProvider.validateToken(token)) {
+    if (jwtTokenProvider.validateToken(token)) {
       Authentication auth = jwtTokenProvider.getAuthentication(token);
-
       if (auth != null) {
         SecurityContextHolder.getContext().setAuthentication(auth);
       }
